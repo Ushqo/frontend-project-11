@@ -2,7 +2,7 @@ import * as yup from 'yup';
 import i18next from 'i18next';
 import onChange from 'on-change';
 
-import resourses from './locales/ru.js';
+import resourses from './locales/resourses.js';
 import render from './render.js';
 
 export default () => {
