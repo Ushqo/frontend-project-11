@@ -1,6 +1,4 @@
 import * as yup from 'yup';
-// import { ValidationError } from 'yup';
-
 import i18next from 'i18next';
 import onChange from 'on-change';
 
