@@ -1,11 +1,11 @@
 export default {
   translation: {
     errors: {
-      Required: 'Не должно быть пустым',
-      ParsingError: 'Ресурс не содержит валидный RSS',
-      Incorrecturl: 'Ссылка должна быть валидным URL',
-      LinkAlreadyAdded: 'RSS уже существует',
-      NetworkError: 'Ошибка сети',
+      required: 'Не должно быть пустым',
+      parsingError: 'Ресурс не содержит валидный RSS',
+      invalidUrl: 'Ссылка должна быть валидным URL',
+      linkAlreadyAdded: 'RSS уже существует',
+      networkError: 'Ошибка сети',
     },
   },
 };
