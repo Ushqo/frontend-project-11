@@ -2,11 +2,10 @@ import * as yup from 'yup';
 import i18next from 'i18next';
 import onChange from 'on-change';
 
-import resourses from './locales/resourses.js';
+import resources from './locales/resources.js';
 import render from './render.js';
 
 export default () => {
-  // Состояния при запуске приложения (Инициирующее состояние)
   const initialState = {
     form: {
       valid: true,
@@ -19,7 +18,6 @@ export default () => {
     language: '',
   };
 
-  // объект с DOM элементами
   const elements = {
     form: document.querySelector('.rss-form '),
     fields: {
@@ -29,13 +27,12 @@ export default () => {
     feedback: document.querySelector('.feedback'),
   };
 
-  // i18next
   const i18nextInstance = i18next.createInstance();
 
   i18nextInstance.init({
     lng: 'ru',
     debug: true,
-    resourses,
+    resources,
   }).then(() => {
     const state = onChange(initialState, render(elements));
 
@@ -45,17 +42,16 @@ export default () => {
       },
       mixed: {
         required: () => ({ key: 'errros.requiredField' }),
-        notOneOf: () => ({ key: 'errors.rssAlreadyAdded' }),
+        notOneOf: () => ({ key: 'errors.linkAlreadyAdded' }),
       },
     });
 
     // Результат промис
     const validateURL = (url) => {
-      const schema = yup.string().required().url().notOneOf(state.feeds, 'Ссылка уже имеется в списке фидов');
+      const schema = yup.string().required().url().notOneOf(state.feeds);
       return schema.validate(url);
     };
 
-    // Слушатель на форму
     elements.form.addEventListener('submit', (e) => {
       e.preventDefault();
 
@@ -74,9 +70,6 @@ export default () => {
         })
         // Обработка ошибок
         .catch((err) => {
-          // console.log(JSON.stringify(err, null, 2));
-          // console.log(`err.errors: ${err.errors.key}`);
-          console.log(i18nextInstance.t('errors.incorrectUrl'));
           state.form.errors = i18nextInstance.t(err.message.key);
           state.form.valid = false;
         });
