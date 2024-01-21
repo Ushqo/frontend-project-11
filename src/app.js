@@ -1,15 +1,14 @@
 import * as yup from 'yup';
-import i18next from 'i18next';
-import onChange from 'on-change';
+import i18n from 'i18next';
 
 import resources from './locales/resources.js';
-import render from './render.js';
+import watch from './view.js';
 
 export default () => {
   const initialState = {
     form: {
       valid: true,
-      errors: {},
+      error: {},
       fields: {
         url: '',
       },
@@ -27,14 +26,14 @@ export default () => {
     feedback: document.querySelector('.feedback'),
   };
 
-  const i18nextInstance = i18next.createInstance();
+  const i18nInstance = i18n.createInstance();
 
-  i18nextInstance.init({
+  i18nInstance.init({
     lng: 'ru',
     debug: true,
     resources,
   }).then(() => {
-    const state = onChange(initialState, render(elements));
+    const watchedState = watch(initialState, elements, i18nInstance);
 
     yup.setLocale({
       string: {
@@ -48,7 +47,7 @@ export default () => {
 
     // Результат промис
     const validateURL = (url) => {
-      const schema = yup.string().required().url().notOneOf(state.feeds);
+      const schema = yup.string().required().url().notOneOf(watchedState.feeds);
       return schema.validate(url);
     };
 
@@ -56,22 +55,25 @@ export default () => {
       e.preventDefault();
 
       const formData = new FormData(e.target);
-      const value = formData.get('url');
-      state.form.fields.url = value;
+      const url = formData.get('url');
+      // watchedState.form.fields.url = value;
 
       // Валидация
-      validateURL(state.form.fields.url)
+      validateURL(url)
         .then(() => {
-          state.form.errors = '';
-          state.form.valid = true;
-          state.feeds.push(state.form.fields.url);
+          watchedState.form = {
+            valid: true,
+            error: null,
+          };
+          // watchedState.feeds.push(watchedState.form.fields.url);
           elements.form.reset();
           elements.fields.url.focus();
         })
-        // Обработка ошибок
         .catch((err) => {
-          state.form.errors = i18nextInstance.t(err.message.key);
-          state.form.valid = false;
+          watchedState.form = {
+            valid: false,
+            error: i18nInstance.t(err.message.key),
+          };
         });
     });
   });
